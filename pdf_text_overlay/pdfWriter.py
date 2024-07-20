@@ -66,9 +66,11 @@ class WriteToPDF(object):
                         """Could not find value for key: {}""".format(key)
                     )
                 self.__set_font_size(can, config_data)
-                can.setStrokeColorRGB(0, 0, 0)
-                can.setFillColorRGB(0, 0, 0)
-
+                self.__set_font_color(can, config_data)
+                # warning: rotation persist to later variables!
+                # (do font size and color changes too?)
+                if "rotate" in config_data:
+                    can.rotate(config_data["rotate"])
                 if 'conditional_coordinates' in config_data:
                     try:
                         co_ordinates, = filter(
@@ -168,6 +170,16 @@ class WriteToPDF(object):
         """Set font size."""
         if 'font_size' in config_data:
             can.setFont('font_style', config_data["font_size"])
+
+    def __set_font_color(self, can, config_data):
+        """Set font color."""
+        if 'font_rgb' in config_data:
+            r, g, b = config_data['font_rgb']
+        else:
+            r, g, b = 0, 0, 0
+        can.setStrokeColorRGB(r, g, b)
+        can.setFillColorRGB(r, g, b)
+
 
     def edit_and_save_pdf(self):
         """Return file object."""
